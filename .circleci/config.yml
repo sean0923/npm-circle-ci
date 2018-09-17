@@ -11,11 +11,24 @@ jobs:
     steps:
       - checkout
 
+      - restore_cache:
+          keys:
+          - v1-dependencies-
+          - v1-dependencies-
+
       - run: npm install
       - run:
           name: Run tests
           command: npm test
 
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
   deploy:
     <<: *defaults
     steps:
@@ -25,9 +38,6 @@ jobs:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
       - run:
-          name: Patch npm version
-          command: npm version patch
-      - run:
           name: Publish package
           command: npm publish
             
@@ -35,9 +45,15 @@ workflows:
   version: 2
   test-deploy:
     jobs:
+      - test:
+          filters:
+            tags:
+              only: /^v.*/
       - deploy:
           requires:
             - test
           filters:
+            tags:
+              only: /^v.*/
             branches:
               ignore: /.*/
