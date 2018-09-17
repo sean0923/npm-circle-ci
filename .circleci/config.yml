@@ -1,13 +1,11 @@
 version: 2
 jobs:
-  build:
+  publish:
     docker:
-      - image: debian:stretch
+      - image: circleci/<language>:<version TAG>
     steps:
       - checkout
-      - run:
-          name: Greeting
-          command: echo Hello, world.
-      - run:
-          name: Print the Current Time
-          command: date
+      - run: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+      - run: npm test
+      - run: npm version patch
+      - run: npm publish
