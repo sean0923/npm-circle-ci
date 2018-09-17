@@ -38,6 +38,9 @@ jobs:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
       - run:
+          name: Patch npm version
+          command: npm version patch
+      - run:
           name: Publish package
           command: npm publish
             
@@ -45,15 +48,9 @@ workflows:
   version: 2
   test-deploy:
     jobs:
-      - test:
-          filters:
-            tags:
-              only: /^v.*/
       - deploy:
           requires:
             - test
           filters:
-            tags:
-              only: /^v.*/
             branches:
               ignore: /.*/
