@@ -21,6 +21,10 @@ jobs:
           name: Run tests
           command: npm test
 
+      - run:
+          name: Patch update package
+          command: npm version patch
+
       - save_cache:
           paths:
             - node_modules
