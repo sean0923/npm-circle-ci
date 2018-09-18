@@ -2,7 +2,6 @@
 version: 2
 jobs:
   build:
-    working_directory: /tmp/vasko
     docker:
       - image: circleci/node:8.9.1
     steps:
