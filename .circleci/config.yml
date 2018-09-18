@@ -21,14 +21,6 @@ jobs:
           name: Run tests
           command: npm test
 
-      - run: git config user.email "you@example.com"
-      - run: git config user.name "Your Name"
-      - run: git add . && git commit -m "commit"
-
-      - run:
-          name: Patch update package
-          command: npm version patch
-
       - save_cache:
           paths:
             - node_modules
@@ -44,7 +36,7 @@ jobs:
           at: ~/repo
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKE" > ~/repo/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
           name: Publish package
           command: npm publish
