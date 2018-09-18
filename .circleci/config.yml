@@ -1,52 +1,28 @@
+
 version: 2
-
-defaults: &defaults
-  working_directory: ~/repo
-  docker:
-    - image: circleci/node:8.9.1
-
 jobs:
-  test:
-    <<: *defaults  
+  build:
+    working_directory: /tmp/vasko
+    docker:
+      - image: circleci/python:3.6.2-stretch-browsers
     steps:
       - checkout
 
-      - restore_cache:
-          keys:
-          - v1-dependencies-
-          - v1-dependencies-
+      - run:
+          name: Installing dependencies.
+          command: npm install
 
-      - run: npm install
       - run:
           name: Run tests
           command: NODE_ENV="ci" npm test
 
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-
-
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-  deploy:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-      - run:
-          name: Publish package
-          command: npm publish
 
-          
-workflows:
-  version: 2
-  test-deploy:
-    jobs:
-      - test
       - deploy:
-          requires:
-            - test
+          name: Deploy to S3 if branch is Master.
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              npm publish
+            fi
