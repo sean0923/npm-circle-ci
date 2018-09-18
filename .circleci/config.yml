@@ -8,6 +8,9 @@ defaults: &defaults
 jobs:
   test:
     <<: *defaults  
+    branches:
+      only:
+        - master
     steps:
       - checkout
 
@@ -45,7 +48,6 @@ jobs:
 workflows:
   version: 2
   test-deploy:
-    branch: master
     jobs:
       - test
       - deploy:
