@@ -8,9 +8,6 @@ defaults: &defaults
 jobs:
   test:
     <<: *defaults  
-    branches:
-      only:
-        - master
     steps:
       - checkout
 
